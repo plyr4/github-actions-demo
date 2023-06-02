@@ -27,10 +27,8 @@ jobs:
       - uses: actions/checkout@v2
 
       # Runs a single command using the runners shell
-      - name: Run misc commands
-        run:
-          - echo "hello"
-          - echo "world"
+      - name: Run script
+        run: ./script.sh
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
