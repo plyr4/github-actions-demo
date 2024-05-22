@@ -9,8 +9,18 @@ permissions:
 
 jobs:
   test:
-    runs-on: linux-standard
+    runs-on: ubuntu-latest
     steps:
       - name: run some tests
         id: test
-        run: echo "hello"
+        run: |
+          AUTH_TOKEN=$(
+            curl \
+                -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+                -H "Accept: application/json; api-version=2.0" \
+                -H "Content-Type: application/json" \
+                "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=manager" |
+            jq -r '.value')
+
+          A="$(cut -d'.' -f2 <<<"$AUTH_TOKEN")" 
+          echo "$A" | base64 -d | jq -r .aud
