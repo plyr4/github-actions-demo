@@ -10,10 +10,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: run some tests
+      - name: set-and-check-oidc-audience
         id: test
         run: |
-          AUTH_TOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=api://AzureADTokenExchange"
-          | jq -r '.value')
+          AUTH_TOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=api://AzureADTokenExchange" | jq -r '.value')
           SPLIT="$(cut -d'.' -f2 <<<"$AUTH_TOKEN")" 
           echo "$SPLIT" | base64 -d | jq -r .aud
