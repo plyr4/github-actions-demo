@@ -1,11 +1,10 @@
-name: test
+name: check-oidc-audience
 run-name: "ran-by-${{ github.actor }}"
 on:
   push
 
 permissions:
     id-token: write
-    contents: read
 
 jobs:
   test:
@@ -14,13 +13,7 @@ jobs:
       - name: run some tests
         id: test
         run: |
-          AUTH_TOKEN=$(
-            curl \
-                -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-                -H "Accept: application/json; api-version=2.0" \
-                -H "Content-Type: application/json" \
-                "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=manager" |
-            jq -r '.value')
-
-          A="$(cut -d'.' -f2 <<<"$AUTH_TOKEN")" 
-          echo "$A" | base64 -d | jq -r .aud
+          AUTH_TOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=api://AzureADTokenExchange"
+          | jq -r '.value')
+          SPLIT="$(cut -d'.' -f2 <<<"$AUTH_TOKEN")" 
+          echo "$SPLIT" | base64 -d | jq -r .aud
